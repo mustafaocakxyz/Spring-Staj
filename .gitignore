@@ -1,0 +1,23 @@
+# Maven
+/target
+*.jar
+*.war
+
+# Logs
+*.log
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Gradle
+/build
+.gradle
