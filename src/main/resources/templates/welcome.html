@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoşgeldin</title>
+</head>
+<body>
+<form action="/greet" method="post">
+    <input type="text" name="name" placeholder="Adınızı girin" required />
+    <button type="submit">Gönder</button>
+</form>
+
+<h1 th:if="${name}" th:text="'Hoşgeldin, ' + ${name} + '!'">Hoşgeldin!</h1>
+</body>
+</html>
