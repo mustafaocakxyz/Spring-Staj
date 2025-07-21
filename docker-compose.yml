@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: spring_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "50001:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: spring_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "50000:80"
