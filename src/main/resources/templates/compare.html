@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rate Comparison</title>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 2em auto; }
+        th, td { border: 1px solid #ccc; padding: 0.5em 1em; text-align: center; }
+        th { background: #f0f0f0; }
+        .best { font-weight: bold; color: green; }
+    </style>
+</head>
+<body>
+<h2 style="text-align:center;">Currency Rate Comparison</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Currency</th>
+            <th>Client 1 Rate</th>
+            <th>Client 2 Rate</th>
+            <th>Lowest Rate</th>
+            <th>Source</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr th:each="result : ${results}">
+        <td th:text="${result.currencyCode}"></td>
+        <td th:text="${result.client1Rate}"></td>
+        <td th:text="${result.client2Rate}"></td>
+        <td th:text="${result.lowestRate}" th:classappend="${result.source == 'Client1'} ? 'best' : ''"></td>
+        <td th:text="${result.source}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html> 
