@@ -11,6 +11,7 @@ public class RateComparisonResult {
     private String currencyCode;
     private Double client1Rate;
     private Double client2Rate;
+    private Double client3Rate;
     private Double lowestRate;
     private String source;
 } 
