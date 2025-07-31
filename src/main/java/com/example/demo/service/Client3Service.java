@@ -5,6 +5,7 @@ import com.example.demo.entity.Client3Rate;
 import com.example.demo.repository.Client3RateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +16,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class Client3Service {
-    private static final String CLIENT3_URL = "https://v6.exchangerate-api.com/v6/4e12abee8ed9abecd369eb5d/latest/USD";
+    @Value("${client3.api.url}")
+    private String CLIENT3_URL;
 
     @Autowired
     private RestTemplate restTemplate;

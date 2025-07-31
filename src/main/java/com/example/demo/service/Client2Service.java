@@ -4,6 +4,7 @@ import com.example.demo.entity.Client2Rate;
 import com.example.demo.repository.Client2RateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,7 +20,8 @@ import java.util.Map;
 @Slf4j
 @Service
 public class Client2Service {
-    private static final String CLIENT2_URL = "https://6f0028f3-b77d-451e-8471-7ed5480d2e3d.mock.pstmn.io/client2";
+    @Value("${client2.api.url}")
+    private String CLIENT2_URL;
 
     @Autowired
     private RestTemplate restTemplate;
