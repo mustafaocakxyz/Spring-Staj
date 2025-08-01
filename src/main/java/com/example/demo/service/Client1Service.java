@@ -4,26 +4,24 @@ import com.example.demo.dto.Client1Response;
 import com.example.demo.entity.Client1Rate;
 import com.example.demo.repository.Client1RateRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Service
 @Slf4j
 public class Client1Service {
-    @Value("${client1.api.url}")
-    private String CLIENT1_URL;
+    
+    private final String CLIENT1_URL;
+    private final RestTemplate restTemplate;
+    private final Client1RateRepository client1RateRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private Client1RateRepository client1RateRepository;
+    public Client1Service(String client1Url, RestTemplate restTemplate, Client1RateRepository client1RateRepository) {
+        this.CLIENT1_URL = client1Url;
+        this.restTemplate = restTemplate;
+        this.client1RateRepository = client1RateRepository;
+    }
 
     public Client1Response fetchRates() {
         LocalDateTime requestTime = LocalDateTime.now();
