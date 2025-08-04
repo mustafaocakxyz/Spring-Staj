@@ -3,10 +3,13 @@ package com.example.demo.service;
 import com.example.demo.entity.Client2Rate;
 import com.example.demo.repository.Client2RateRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -14,18 +17,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 @Slf4j
 public class Client2Service {
     
-    private final String CLIENT2_URL;
-    private final RestTemplate restTemplate;
-    private final Client2RateRepository client2RateRepository;
-
-    public Client2Service(String client2Url, RestTemplate restTemplate, Client2RateRepository client2RateRepository) {
-        this.CLIENT2_URL = client2Url;
-        this.restTemplate = restTemplate;
-        this.client2RateRepository = client2RateRepository;
-    }
+    @Value("${client2.api.url}")
+    private String CLIENT2_URL;
+    
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    @Autowired
+    private Client2RateRepository client2RateRepository;
 
     public Map<String, Double> fetchRates() {
         LocalDateTime requestTime = LocalDateTime.now();
