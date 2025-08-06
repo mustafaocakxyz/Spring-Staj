@@ -3,8 +3,8 @@ package com.example.demo.service;
 import com.example.demo.dto.Client3Response;
 import com.example.demo.entity.Client3Rate;
 import com.example.demo.repository.Client3RateRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,16 +15,14 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class Client3Service {
     
     @Value("${client3.api.url}")
     private String CLIENT3_URL;
     
-    @Autowired
-    private RestTemplate restTemplate;
-    
-    @Autowired
-    private Client3RateRepository client3RateRepository;
+    private final RestTemplate restTemplate;
+    private final Client3RateRepository client3RateRepository;
 
     public Client3Response fetchRates() {
         LocalDateTime requestTime = LocalDateTime.now();

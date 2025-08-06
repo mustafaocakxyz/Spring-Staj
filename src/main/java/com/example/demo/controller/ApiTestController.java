@@ -1,11 +1,10 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import com.example.demo.dto.Client1Response;
-import com.example.demo.dto.Client2Response;
+import com.example.demo.dto.Client3Response;
 import com.example.demo.service.Client1Service;
 import com.example.demo.service.Client2Service;
 import com.example.demo.service.Client3Service;
-import com.example.demo.dto.Client3Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

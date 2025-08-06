@@ -1,5 +1,6 @@
-package com.example.demo.adapter;
+package com.example.demo.adapter.impl;
 
+import com.example.demo.adapter.ClientAdapter;
 import com.example.demo.dto.Client1Response;
 import com.example.demo.service.Client1Service;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
-package com.example.demo.adapter;
+package com.example.demo.adapter.impl;
 
+import com.example.demo.adapter.ClientAdapter;
 import com.example.demo.service.Client2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
