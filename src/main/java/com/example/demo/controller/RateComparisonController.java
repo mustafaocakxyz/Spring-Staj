@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.controller;
 
 import com.example.demo.dto.RateComparisonResult;
 import com.example.demo.service.RateComparisonService;
