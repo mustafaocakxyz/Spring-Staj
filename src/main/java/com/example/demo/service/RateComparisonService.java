@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -20,30 +22,34 @@ public class RateComparisonService {
         StopWatch totalWatch = new StopWatch("rate-compare");
         totalWatch.start("fetch-all-clients");
 
-        // Get rates from all adapters using list injection
-        List<Map<String, Double>> allRates = new ArrayList<>();
-        int clientIndex = 0;
-        for (ClientAdapter adapter : clientAdapters) {
-            StopWatch clientWatch = new StopWatch("client-" + clientIndex);
+        // Fetch from all adapters in parallel while preserving order by index
+        Map<Integer, Map<String, Double>> indexToRates = new ConcurrentHashMap<>();
+        IntStream.range(0, clientAdapters.size()).parallel().forEach(idx -> {
+            ClientAdapter adapter = clientAdapters.get(idx);
+            StopWatch clientWatch = new StopWatch("client-" + idx);
             clientWatch.start("fetchRates");
             Map<String, Double> rates = adapter.fetchRates();
             clientWatch.stop();
-            log.info("[Perf] clientIndex={} duration_ms={} fetched_keys={}", clientIndex, clientWatch.getTotalTimeMillis(), rates != null ? rates.size() : 0);
-            allRates.add(rates);
-            clientIndex++;
+            indexToRates.put(idx, rates);
+            log.info("[Perf] clientIndex={} duration_ms={} fetched_keys={}", idx, clientWatch.getTotalTimeMillis(), rates != null ? rates.size() : 0);
+        });
+
+        // Restore ordered list by index
+        List<Map<String, Double>> allRates = new ArrayList<>();
+        for (int i = 0; i < clientAdapters.size(); i++) {
+            allRates.add(indexToRates.getOrDefault(i, Map.of()));
         }
+
         totalWatch.stop();
         long fetchAllMs = totalWatch.getLastTaskTimeMillis();
 
         totalWatch.start("compare-logic");
         // For now, we'll use the first three adapters (Client1, Client2, Client3)
-        // In a more dynamic approach, you could iterate through all adapters
         if (allRates.size() >= 3) {
             Map<String, Double> client1Rates = allRates.get(0);
             Map<String, Double> client2Rates = allRates.get(1);
             Map<String, Double> client3Rates = allRates.get(2);
 
-            // Get all currencies that exist in all three clients
             Set<String> allCurrencies = new HashSet<>();
             allCurrencies.addAll(client1Rates.keySet());
             allCurrencies.addAll(client2Rates.keySet());
@@ -54,13 +60,9 @@ public class RateComparisonService {
                 Double rate1 = client1Rates.get(currency);
                 Double rate2 = client2Rates.get(currency);
                 Double rate3 = client3Rates.get(currency);
-                
-                // Only include currencies that have data from all three clients
                 if (rate1 != null && rate2 != null && rate3 != null) {
-                    Double lowest = null;
-                    String source = null;
-                    
-                    // Find the lowest rate among all three
+                    Double lowest;
+                    String source;
                     if (rate1 <= rate2 && rate1 <= rate3) {
                         lowest = rate1;
                         source = "Client1";
@@ -71,7 +73,6 @@ public class RateComparisonService {
                         lowest = rate3;
                         source = "Client3";
                     }
-                    
                     results.add(new RateComparisonResult(currency, rate1, rate2, rate3, lowest, source));
                 }
             }
@@ -83,6 +84,6 @@ public class RateComparisonService {
         totalWatch.stop();
         long compareMs = totalWatch.getLastTaskTimeMillis();
         log.info("[Perf] fetch_all_ms={} compare_ms={} total_ms={} (not enough adapters)", fetchAllMs, compareMs, fetchAllMs + compareMs);
-        return new ArrayList<>(); // Return empty list if not enough adapters
+        return new ArrayList<>();
     }
 } 
