@@ -2,24 +2,40 @@ package com.example.demo.service;
 
 import com.example.demo.adapter.ClientAdapter;
 import com.example.demo.dto.RateComparisonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class RateComparisonService {
     
     @Autowired
     private List<ClientAdapter> clientAdapters;
 
     public List<RateComparisonResult> compareRates() {
+        StopWatch totalWatch = new StopWatch("rate-compare");
+        totalWatch.start("fetch-all-clients");
+
         // Get rates from all adapters using list injection
         List<Map<String, Double>> allRates = new ArrayList<>();
+        int clientIndex = 0;
         for (ClientAdapter adapter : clientAdapters) {
-            allRates.add(adapter.fetchRates());
+            StopWatch clientWatch = new StopWatch("client-" + clientIndex);
+            clientWatch.start("fetchRates");
+            Map<String, Double> rates = adapter.fetchRates();
+            clientWatch.stop();
+            log.info("[Perf] clientIndex={} duration_ms={} fetched_keys={}", clientIndex, clientWatch.getTotalTimeMillis(), rates != null ? rates.size() : 0);
+            allRates.add(rates);
+            clientIndex++;
         }
-        
+        totalWatch.stop();
+        long fetchAllMs = totalWatch.getLastTaskTimeMillis();
+
+        totalWatch.start("compare-logic");
         // For now, we'll use the first three adapters (Client1, Client2, Client3)
         // In a more dynamic approach, you could iterate through all adapters
         if (allRates.size() >= 3) {
@@ -59,9 +75,14 @@ public class RateComparisonService {
                     results.add(new RateComparisonResult(currency, rate1, rate2, rate3, lowest, source));
                 }
             }
+            totalWatch.stop();
+            long compareMs = totalWatch.getLastTaskTimeMillis();
+            log.info("[Perf] fetch_all_ms={} compare_ms={} total_ms={}", fetchAllMs, compareMs, fetchAllMs + compareMs);
             return results;
         }
-        
+        totalWatch.stop();
+        long compareMs = totalWatch.getLastTaskTimeMillis();
+        log.info("[Perf] fetch_all_ms={} compare_ms={} total_ms={} (not enough adapters)", fetchAllMs, compareMs, fetchAllMs + compareMs);
         return new ArrayList<>(); // Return empty list if not enough adapters
     }
 } 
