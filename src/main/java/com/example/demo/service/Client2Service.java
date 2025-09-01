@@ -37,7 +37,7 @@ public class Client2Service {
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
         log.info("[Client2] Sending GET request (internal) | URL: {} | Method: GET | Headers: {} | Body: {} | Timestamp: {}", CLIENT2_URL, headers, requestBody, requestTime);
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(CLIENT2_URL, org.springframework.http.HttpMethod.GET, request, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(CLIENT2_URL, org.springframework.http.HttpMethod.POST, request, Map.class);
             LocalDateTime responseTime = LocalDateTime.now();
             log.info("[Client2] Received response | Status: {} | Body: {} | Timestamp: {}", response.getStatusCode(), response.getBody(), responseTime);
             Map<String, Double> rates = response.getBody();
